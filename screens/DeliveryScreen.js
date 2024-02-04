@@ -1,21 +1,18 @@
-import { View, Text, StatusBar, TouchableOpacity, Image, SafeAreaView, Linking, ActivityIndicator, Alert } from 'react-native'
-import React from 'react'
+import { View, Text, StatusBar, TouchableOpacity, Image, SafeAreaView, Linking, ActivityIndicator, Alert, StyleSheet, TextInput } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCategory } from '../slices/categorySlice';
 import { themeColors } from '../theme';
 import * as Icon from "react-native-feather";
 import { emptyBasket, selectBasketItems, selectBasketTotal } from '../slices/basketSlice';
-import { useState } from 'react';
-import OrangeShadowTextInput from '../components/customTextInput';
 import OrangeCheckbox from '../components/customCheckBox';
 import { PHONE_REGEX } from '../constants';
 import { addDataToCollection } from '../config/methods';
 import useGetCollectionData from '../hooks/useGetCollectionData';
-import { useEffect } from 'react';
 
 
-export default function DeliveryScreen() {
+function DeliveryScreen() {
   const navigation = useNavigation();
   const category = useSelector(selectCategory);
   const dispatch = useDispatch();
@@ -29,20 +26,23 @@ export default function DeliveryScreen() {
   const [orderName, setOrderName] = useState('')
   const [loading, setLoading] = useState(false)
 
-  
+
   useEffect(() => {
     if (data) {
-      console.log("Order data----->", data)
       let ordName = `Order # ${data.length ? data.length + 1 : 1}`
       setOrderName(ordName)
     }
   }, [data])
+
+  // console.log("TESTING------->", address.length > 0,  PHONE_REGEX.test(phone), phone, address, address.length)
+
 
   const confirmOrder = () => {
 
     setLoading(true)
 
     if (PHONE_REGEX.test(phone) && address.length > 0) {
+
       setDisable(false)
       let orderData = {
 
@@ -51,21 +51,24 @@ export default function DeliveryScreen() {
         order_total: basketTotal,
         order_items: basketItems.length,
         order_status: "pending",
-        ordered_by: "xbq49GvWjyLGX60QgugP",
+        ordered_by: "dPwJEwgY3DO6wypfuP45",
         products: basketItems,
         name: orderName,
 
       }
       addDataToCollection('orders', orderData).then(res => {
-        console.log("RES------>", res)
         setLoading(false)
         dispatch(emptyBasket());
-        navigation.navigate('OrderPlaced')
+        navigation.replace('OrderPlaced')
       }).catch(e => {
         setLoading(false)
-        Alert("Order not placed! Kindly Connect with Support team")
+        Alert.alert("Order not placed! Kindly Connect with Support team")
       })
+    } else {
+      setLoading(false)
+      Alert.alert("Address or phone number is not correct")
     }
+
   }
 
   return (
@@ -91,19 +94,25 @@ export default function DeliveryScreen() {
 
       <View className="mt-10 " >
         <Text className="text-2xl font-extrabold text-gray-700 ml-5" >Where to deliver the order ?</Text>
-        <OrangeShadowTextInput
+
+        <TextInput
           placeholder="Address"
           onChangeText={(text) => setAddress(text)}
           keyboardType="default"
-          className="ml-5 mr-5 mt-10"
+          style={styles.textInput}
+          className="ml-5 mr-5 mt-5"
         />
-        <OrangeShadowTextInput
+
+        <TextInput
           placeholder="03xxxxxxxx"
           onChangeText={(text) => setPhone(text)}
           keyboardType="numeric"
-          className="ml-5 mr-5 mt-5"
           maxLength={11}
+          style={styles.textInput}
+          className="ml-5 mr-5 mt-5"
+
         />
+
       </View>
 
       <View className="flex-row justify-center items-center mt-5" >
@@ -156,4 +165,24 @@ export default function DeliveryScreen() {
       </View>
     </View>
   )
+
 }
+
+const styles = StyleSheet.create({
+  textInput: {
+    height: 60,
+    borderColor: 'orange', // Border color
+    borderWidth: 1,
+    borderRadius: 8, // Border radius for rounded corners
+    paddingHorizontal: 10, // Horizontal padding for text inside TextInput
+    shadowColor: 'orange', // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset
+    shadowOpacity: 0.5, // Shadow opacity
+    shadowRadius: 4, // Shadow radius
+    elevation: 5, // Elevation for Android shadow
+    backgroundColor: 'white', // Background color
+    marginBottom: 10, // Bottom margin for spacing
+  },
+});
+
+export default DeliveryScreen;

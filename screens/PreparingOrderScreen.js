@@ -13,8 +13,10 @@ export default function PreparingOrderScreen() {
   const dispatch = useDispatch();
 
   const clickOk = () => {
-    dispatch(emptyBasket());
-    navigation.navigate('Home');
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home' }],
+    });
   }
 
   return (

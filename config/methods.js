@@ -2,11 +2,9 @@ import { database } from '../config/firebase';
 
 export const addDataToCollection = async (collectionName, data) => {
     try {
+        
         const collectionRef = database.collection(collectionName);
-
-        // Add data to the collection
         let res = await collectionRef.add(data);
-
         console.log('Data added to collection successfully', res);
         return res
 
