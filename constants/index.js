@@ -1,3 +1,8 @@
+export const PHONE_REGEX =
+  /^((\+92)?(0092)?(92)?(0)?)(3)((0)?(1)?(2)?(3)?(4)?)([0-9]{8})$/gm;
+
+
+
 export const categories = [
     {
         id: 1,

@@ -16,7 +16,6 @@ export default function CategoryScreen() {
     const navigation = useNavigation();
     const categoryInRedux = useSelector(selectCategory);
 
-    console.log("INITIALLY---->", categoryInRedux)
     let dispatch = useDispatch();
 
     const { params: {
@@ -31,11 +30,12 @@ export default function CategoryScreen() {
     }, [])
 
     const { data } = useGetCollectionDataById('items', 'category_id', id)
+
     useEffect(() => {
 
-        if (categoryInRedux && categoryInRedux.id != id) {
-            dispatch(emptyBasket());
-        }
+        // if (categoryInRedux && categoryInRedux.id != id) {
+        //     dispatch(emptyBasket());
+        // }
         dispatch(setCategory({
             id,
             title,

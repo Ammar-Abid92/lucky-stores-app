@@ -17,8 +17,8 @@ export default function Navigation() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Category" component={CategoryScreen} />
         <Stack.Screen name="Cart" options={{ presentation: 'modal', headerShown: false }} component={CartScreen} />
-        <Stack.Screen name="PreparingOrder" options={{ presentation: 'fullScreenModal', headerShown: false }} component={PreparingOrderScreen} />
         <Stack.Screen name="Delivery" options={{ presentation: 'fullScreenModal', headerShown: false }} component={DeliveryScreen} />
+        <Stack.Screen name="OrderPlaced" options={{ presentation: 'fullScreenModal', headerShown: false }} component={PreparingOrderScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

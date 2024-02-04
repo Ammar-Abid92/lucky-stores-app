@@ -33,15 +33,6 @@ export default function BasketScreen() {
 
     }, [basketItems])
 
-
-    const placeOrder = () => {
-
-        let orderData = {
-
-        }
-        addDataToCollection('orders', )
-    }
-
     return (
         <View className=" bg-white flex-1">
             {/* top button */}
@@ -57,12 +48,6 @@ export default function BasketScreen() {
                     <Text className="text-center text-gray-500">{category?.title}</Text>
                 </View>
 
-            </View>
-
-            {/* delivery time */}
-            <View style={{ backgroundColor: themeColors.bgColor(0.2) }} className="flex-row px-4 items-center">
-                <Image source={require('../assets/images/bikeGuy.png')} className="w-20 h-20 rounded-full" />
-                <Text className="flex-1 pl-4">Smooth and safe delivery with lucky stores</Text>
             </View>
 
             {/* dishes */}
