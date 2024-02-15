@@ -2,7 +2,9 @@ import { View, Text, TouchableOpacity, Image, TouchableWithoutFeedback, StyleShe
 import React from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { themeColors } from '../theme';
-
+import Animated, {
+  useSharedValue,
+} from 'react-native-reanimated';
 const windowWidth = Dimensions.get('window').width;
 
 export default function CategoryCard({
@@ -10,11 +12,12 @@ export default function CategoryCard({
   title,
   imgUrl,
   description,
+  entering
 }) {
   const navigation = useNavigation();
 
   return (
-    <TouchableWithoutFeedback onPress={() => {
+    <TouchableOpacity onPress={() => {
       navigation.navigate('Category', {
         id,
         title,
@@ -22,13 +25,15 @@ export default function CategoryCard({
         description,
       })
     }}>
-      <View style={styles.container}>
-        <Image style={styles.image} source={{ uri: imgUrl }} />
+      <Animated.View entering={entering} style={styles.container}>
+        <Animated.Image style={styles.image} source={{ uri: imgUrl }}
+          sharedTransitionTag={`image-${id}`}
+        />
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </Animated.View>
+    </TouchableOpacity>
   )
 }
 
@@ -41,8 +46,8 @@ const styles = StyleSheet.create({
     shadowColor: themeColors.bgColor(0.2),
     elevation: 5,
     shadowRadius: 7,
-    justifyContent:'center',
-    alignItems:'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   image: {
     height: 150,

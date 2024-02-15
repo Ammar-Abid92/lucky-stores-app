@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, StatusBar, Image, TextInput, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, StatusBar, Image, TextInput, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
 import React, { useLayoutEffect, useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import Categories from '../components/categories'
@@ -6,6 +6,7 @@ import * as Icon from "react-native-feather";
 import { themeColors } from '../theme'
 import useGetCollectionData from '../hooks/useGetCollectionData'
 import CategoryCard from '../components/categoryCard'
+import Animated, { FadeIn, FadeInLeft } from 'react-native-reanimated';
 
 export default function HomeScreen() {
 
@@ -13,25 +14,18 @@ export default function HomeScreen() {
         navigation.setOptions({ headerShown: false })
     }, [])
     const navigation = useNavigation();
-    const { data } = useGetCollectionData('categories')
-    const [loading, setLoading] = useState(true)
+    const { data, loading, error } = useGetCollectionData('categories')
     const [searchData, setSearchData] = useState([])
-
-    useEffect(() => {
-        if (data) {
-            setLoading(false)
-        }
-    }, [data])
 
     const handleSearch = (val) => {
         if (data.length) {
-            let res = data.filter(x=>x.name.includes(val))
+            let res = data.filter(x => x.name.includes(val))
             setSearchData(res)
         }
     }
 
     return (
-        <SafeAreaView style={{ flex: 1 }} >
+        <View style={{ flex: 1 }} >
             <StatusBar
                 setNetworkActivityIndicatorVisible
             />
@@ -47,42 +41,36 @@ export default function HomeScreen() {
                     </View>
                 </View>
                 <View className=" rounded-full">
-                    <Image style={{width: 50, height: 50}} source={require('../assets/lucky-store-logo-1.png')} />
+                    <Image style={{ width: 50, height: 50 }} source={require('../assets/lucky-store-logo-1.png')} />
                 </View>
             </View>
 
             <View className="flex-row justify-between items-center px-4 mt-5">
-                <View>
-                    <Text className="font-bold text-lg">
-                        Hot Selling categories
-                    </Text>
+                <Animated.Text entering={FadeInLeft.duration(300).delay(200)} className="font-bold text-lg">
+                    Hot Selling categories
+                </Animated.Text>
+            </View>
+
+            {loading ? (
+                <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+                    <ActivityIndicator size="large" color="orange" />
                 </View>
+            ) : (
+                <Categories />
+            )}
+
+            <View className="flex-row justify-between items-center px-4 mt-5">
+                <Animated.Text entering={FadeInLeft.duration(300).delay(100)} className="font-bold text-lg">
+                    All categories
+                </Animated.Text>
             </View>
 
             {loading ? (
                 <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'center' }}>
                     <ActivityIndicator size="large" color="orange" />
                 </View>
-            ) : (
-
-                <Categories />
-            )}
-
-
-            {loading ? (
-                <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'center' }}>
-                    <ActivityIndicator size="large" color="orange" />
-                </View>
-            ) : (
+            ) : data.length ? (
                 <>
-                    <View className="flex-row justify-between items-center px-4 mt-5">
-                        <View>
-                            <Text className="font-bold text-lg">
-                                All categories
-                            </Text>
-                        </View>
-                    </View>
-
                     <View style={{ flex: 1.5 }} >
 
                         <FlatList
@@ -95,8 +83,10 @@ export default function HomeScreen() {
                                 paddingHorizontal: 10, // Adjust horizontal padding
                                 paddingTop: 5, // Add padding to match the py-5 style
                             }}
-                            renderItem={({ item }) => (
+                            renderItem={({ item, index }) => (
+
                                 <CategoryCard
+                                    entering={FadeInLeft.duration(300).delay(200 + index * 200)}
                                     id={item.id}
                                     imgUrl={item?.image}
                                     title={item?.name}
@@ -111,7 +101,13 @@ export default function HomeScreen() {
                     </View>
                 </>
 
-            )}
+            ) : error.length ? (
+                <View style={{ height: "45%", justifyContent: 'center', backgroundColor: 'white' }}>
+                    <Text className="px-4 py-4 text-2xl font-bold text-center mt-20" >
+                        {"No category \n \n found"}
+                    </Text>
+                </View>
+            ) : null}
 
 
             <View style={{ flex: 0.15, marginBottom: 10, marginTop: 10 }} >
@@ -125,6 +121,6 @@ export default function HomeScreen() {
             </View>
 
 
-        </SafeAreaView>
+        </View>
     )
 }

@@ -1,4 +1,4 @@
-import { View, Text, StatusBar, TouchableOpacity, Image, SafeAreaView, Linking, ActivityIndicator, Alert, StyleSheet, TextInput } from 'react-native'
+import { View, Text, StatusBar, TouchableOpacity, Image, Linking, ActivityIndicator, Alert, StyleSheet, TextInput } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,28 +18,28 @@ function DeliveryScreen() {
   const dispatch = useDispatch();
   const basketItems = useSelector(selectBasketItems);
   const basketTotal = useSelector(selectBasketTotal);
+  const { data, loading, error } = useGetCollectionData('orders')
 
-  const { data } = useGetCollectionData('orders')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
-  const [disable, setDisable] = useState(false)
-  const [orderName, setOrderName] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [disable, setDisable] = useState(true)
+  const [localLoading, setLocalLoading] = useState(false)
 
 
   useEffect(() => {
-    if (data) {
-      let ordName = `Order # ${data.length ? data.length + 1 : 1}`
-      setOrderName(ordName)
+    checkValidity()
+  }, [phone, address])
+
+
+  const checkValidity = () => {
+    if (PHONE_REGEX.test(phone) && address.length > 0) {
+      setDisable(false)
     }
-  }, [data])
-
-  // console.log("TESTING------->", address.length > 0,  PHONE_REGEX.test(phone), phone, address, address.length)
-
+  }
 
   const confirmOrder = () => {
 
-    setLoading(true)
+    setLocalLoading(true)
 
     if (PHONE_REGEX.test(phone) && address.length > 0) {
 
@@ -48,24 +48,31 @@ function DeliveryScreen() {
 
         delivery_address: address,
         delivery_phone: phone,
-        order_total: basketTotal,
+        order_total: Number(basketTotal),
         order_items: basketItems.length,
         order_status: "pending",
         ordered_by: "dPwJEwgY3DO6wypfuP45",
         products: basketItems,
-        name: orderName,
+        name: `Order # ${data?.length ? data?.length + 1 : 1}`,
+        createdAt: new Date()
 
       }
       addDataToCollection('orders', orderData).then(res => {
-        setLoading(false)
-        dispatch(emptyBasket());
-        navigation.replace('OrderPlaced')
+        if (res != 'error') {
+
+          console.log("ORDER DATA", orderData)
+          setLocalLoading(false)
+          navigation.replace('OrderPlaced')
+          dispatch(emptyBasket());
+        } else {
+          throw new Error("Order not placed! Kindly Connect with Support team")
+        }
       }).catch(e => {
-        setLoading(false)
+        setLocalLoading(false)
         Alert.alert("Order not placed! Kindly Connect with Support team")
       })
     } else {
-      setLoading(false)
+      setLocalLoading(false)
       Alert.alert("Address or phone number is not correct")
     }
 
@@ -92,35 +99,48 @@ function DeliveryScreen() {
         <Text className="flex-1 pl-4">Smooth and safe delivery with lucky stores</Text>
       </View>
 
-      <View className="mt-10 " >
-        <Text className="text-2xl font-extrabold text-gray-700 ml-5" >Where to deliver the order ?</Text>
+      {data.length ? (
 
-        <TextInput
-          placeholder="Address"
-          onChangeText={(text) => setAddress(text)}
-          keyboardType="default"
-          style={styles.textInput}
-          className="ml-5 mr-5 mt-5"
-        />
+        <View className="mt-10 " >
+          <Text className="text-2xl font-extrabold text-gray-700 ml-5" >Where to deliver the order ?</Text>
 
-        <TextInput
-          placeholder="03xxxxxxxx"
-          onChangeText={(text) => setPhone(text)}
-          keyboardType="numeric"
-          maxLength={11}
-          style={styles.textInput}
-          className="ml-5 mr-5 mt-5"
+          <TextInput
+            placeholder="Address"
+            onChangeText={(text) => setAddress(text)}
+            keyboardType="default"
+            style={styles.textInput}
+            className="ml-5 mr-5 mt-5"
+          />
 
-        />
+          <TextInput
+            placeholder="03xxxxxxxx"
+            onChangeText={(text) => setPhone(text)}
+            keyboardType="numeric"
+            maxLength={11}
+            style={styles.textInput}
+            className="ml-5 mr-5 mt-5"
 
-      </View>
+          />
+
+        </View>
+      ) : loading ? (
+        <View className="mt-10 flex-1 justify-center">
+          <ActivityIndicator size="large" color="orange" />
+        </View>
+      ) : error.length ? (
+        <View className="mt-10 flex-1 justify-center">
+          <Text className="px-4 py-4 text-2xl font-bold text-center mt-20" >
+            {"No item \n found inside this category"}
+          </Text>
+        </View>
+      ) : null}
 
       <View className="flex-row justify-center items-center mt-5" >
         <OrangeCheckbox />
         <Text className="ml-2" >Cash on delivery</Text>
       </View>
 
-      {!loading ? (
+      {!localLoading ? (
 
         <TouchableOpacity
           disabled={disable}

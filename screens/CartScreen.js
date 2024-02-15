@@ -1,13 +1,13 @@
-import { View, Text, StatusBar, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { View, Text, StatusBar, TouchableOpacity, Image, ScrollView, FlatList } from 'react-native'
 import React, { useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { removeFromBasket, selectBasketItems, selectBasketTotal } from '../slices/basketSlice';
+import { emptyBasket, removeFromBasket, selectBasketItems, selectBasketTotal } from '../slices/basketSlice';
 import { check, selectCategory } from '../slices/categorySlice';
 import { useNavigation } from '@react-navigation/native';
 import { urlFor } from '../sanity';
 import * as Icon from "react-native-feather";
 import { themeColors } from '../theme';
-import { addDataToCollection } from '../config/methods';
+import { useEffect } from 'react';
 
 export default function BasketScreen() {
     const category = useSelector(selectCategory);
@@ -17,8 +17,11 @@ export default function BasketScreen() {
 
     const dispatch = useDispatch();
     const navigation = useNavigation();
-    const deliveryFee = 2;
+    const deliveryFee = 0;
+
     useMemo(() => {
+
+
 
         const gItems = basketItems.reduce((group, item) => {
             if (group[item.id]) {
@@ -29,12 +32,11 @@ export default function BasketScreen() {
             return group;
         }, {})
         setGroupedItems(gItems);
-        console.log("GITEMS----->", groupedItems)
 
     }, [basketItems])
 
     return (
-        <View className=" bg-white flex-1">
+        <View className=" bg-[#f2f2f2] flex-1">
             {/* top button */}
             <View className="relative py-4 shadow-sm">
                 <TouchableOpacity
@@ -50,10 +52,11 @@ export default function BasketScreen() {
 
             </View>
 
-            {/* dishes */}
+            {/* items */}
+
             <ScrollView
                 showsVerticalScrollIndicator={false}
-                className="bg-white pt-5"
+                className="pt-5"
                 contentContainerStyle={{
                     paddingBottom: 50
                 }}
@@ -71,7 +74,15 @@ export default function BasketScreen() {
                                 <TouchableOpacity
                                     className="p-1 rounded-full"
                                     style={{ backgroundColor: themeColors.bgColor(1) }}
-                                    onPress={() => dispatch(removeFromBasket({ id: items[0]?.id }))}>
+                                    onPress={() => {
+                                        if (basketItems.length > 1){
+                                            dispatch(removeFromBasket({ id: items[0]?.id }))
+                                        } else {
+                                            dispatch(emptyBasket())
+                                            navigation.goBack()
+                                        }
+
+                                    }}>
                                     <Icon.Minus strokeWidth={2} height={20} width={20} stroke="white" />
                                 </TouchableOpacity>
                             </View>
@@ -106,7 +117,7 @@ export default function BasketScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
-            ): null}
+            ) : null}
         </View>
     )
 }
