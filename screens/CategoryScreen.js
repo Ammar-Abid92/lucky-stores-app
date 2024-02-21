@@ -10,7 +10,7 @@ import { emptyBasket, selectBasketItems } from '../slices/basketSlice';
 import * as Icon from "react-native-feather";
 import { themeColors } from '../theme';
 import useGetCollectionData from '../hooks/useGetCollectionData';
-import useGetCollectionDataById from '../hooks/useGetCollectionDataById';
+import useGetCollectionDataByQuery from '../hooks/useGetCollectionDataByQuery';
 import Animated, { FadeIn, FadeInLeft } from 'react-native-reanimated';
 import { DefaultTheme } from '@react-navigation/native';
 
@@ -36,7 +36,7 @@ export default function CategoryScreen() {
         navigation.setOptions({ headerShown: false })
     }, [])
 
-    const { data, error, loading } = useGetCollectionDataById('items', 'category_name', title.toLowerCase())
+    const { data, error, loading } = useGetCollectionDataByQuery('items', 'category_name', title.toLowerCase())
 
     useEffect(() => {
 
@@ -56,7 +56,7 @@ export default function CategoryScreen() {
             <ItemRow
                 entering={FadeInLeft.duration(300).delay(delay)}
                 id={item?.id}
-                name={item?.name}
+                name={item?.item_name}
                 description={item?.description}
                 price={item?.discounted_price > 0 ? item?.discounted_price : item?.selling_price}
                 image={item?.images[0]}

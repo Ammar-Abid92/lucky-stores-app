@@ -7,10 +7,12 @@ import { themeColors } from '../theme'
 import useGetCollectionData from '../hooks/useGetCollectionData'
 import CategoryCard from '../components/categoryCard'
 import Animated, { FadeIn, FadeInLeft } from 'react-native-reanimated';
+import { removeCustomerFromAsyncStorage } from '../config/methods';
 
 export default function HomeScreen() {
 
     useLayoutEffect(() => {
+
         navigation.setOptions({ headerShown: false })
     }, [])
     const navigation = useNavigation();
@@ -90,11 +92,7 @@ export default function HomeScreen() {
                                     id={item.id}
                                     imgUrl={item?.image}
                                     title={item?.name}
-                                    rating={item?.rating}
-                                    type={item?.type?.name}
-                                    address="123 main street"
                                     description={item?.description}
-                                    dishes={item?.dishes}
                                 />
                             )}
                         />

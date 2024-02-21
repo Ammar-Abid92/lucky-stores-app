@@ -34,4 +34,5 @@ if (firebase.apps.length === 0) {
 // console.log("APP------>", app.firestore().collection('categories').get().then(res=>console.log("===>",res.docs.map(doc => doc.data()))))
 export const database = app.firestore();
 export const auth = firebase.auth();
+export default app;
 

@@ -2,6 +2,7 @@ export const PHONE_REGEX =
     /^03[0-4][0-9]{8}$/;
 
 
+export const CUSTOMER_KEY = "customerDetails";
 
 export const categories = [
     {

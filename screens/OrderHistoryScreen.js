@@ -7,12 +7,15 @@ import { useDispatch } from 'react-redux';
 import useGetCollectionData from '../hooks/useGetCollectionData';
 import OrderList from '../components/orderList'
 import { FadeInLeft } from 'react-native-reanimated';
+import useGetCollectionDataByQuery from '../hooks/useGetCollectionDataByQuery';
+import useGetUserFromAsync from '../hooks/useGetUserFromAsync';
 
 
 const OrderHistoryScreen = () => {
+  const { customerData } = useGetUserFromAsync()
   const navigation = useNavigation();
 
-  const { data: orderData, loading, error } = useGetCollectionData('orders')
+  const { data: orderData, loading, error } = useGetCollectionDataByQuery('orders', 'placed_by', customerData?.uid)
 
   const renderItem = ({ item, index }) => {
 
@@ -34,7 +37,6 @@ const OrderHistoryScreen = () => {
     )
 
   }
-
 
 
   return (

@@ -10,6 +10,7 @@ import OrangeCheckbox from '../components/customCheckBox';
 import { PHONE_REGEX } from '../constants';
 import { addDataToCollection } from '../config/methods';
 import useGetCollectionData from '../hooks/useGetCollectionData';
+import useGetUserFromAsync from '../hooks/useGetUserFromAsync';
 
 
 function DeliveryScreen() {
@@ -19,6 +20,7 @@ function DeliveryScreen() {
   const basketItems = useSelector(selectBasketItems);
   const basketTotal = useSelector(selectBasketTotal);
   const { data, loading, error } = useGetCollectionData('orders')
+  const { customerData } = useGetUserFromAsync()
 
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
@@ -39,6 +41,8 @@ function DeliveryScreen() {
 
   const confirmOrder = () => {
 
+    console.log("CUSTOMER DATA------>", customerData)
+
     setLocalLoading(true)
 
     if (PHONE_REGEX.test(phone) && address.length > 0) {
@@ -54,7 +58,8 @@ function DeliveryScreen() {
         ordered_by: "dPwJEwgY3DO6wypfuP45",
         products: basketItems,
         name: `Order # ${data?.length ? data?.length + 1 : 1}`,
-        createdAt: new Date()
+        createdAt: new Date(),
+        placed_by: customerData?.uid
 
       }
       addDataToCollection('orders', orderData).then(res => {
@@ -99,7 +104,7 @@ function DeliveryScreen() {
         <Text className="flex-1 pl-4">Smooth and safe delivery with lucky stores</Text>
       </View>
 
-      {data.length ? (
+      {data ? (
 
         <View className="mt-10 " >
           <Text className="text-2xl font-extrabold text-gray-700 ml-5" >Where to deliver the order ?</Text>

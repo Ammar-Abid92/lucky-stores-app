@@ -24,6 +24,7 @@ const useGetCollectionData = (collectionName) => {
       setData(fetchedData);
 
     } catch (e) {
+      console.log("ERROR INSIDE HOOK---->", e)
       setLoading(false)
       setError('Error')
 

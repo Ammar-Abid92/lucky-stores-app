@@ -1,25 +1,25 @@
-// import React, { useEffect, useState } from 'react'
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { USER_KEY } from '../constants';
+import React, { useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CUSTOMER_KEY } from '../constants';
 
-// const useGetUserFromAsync = (isLoggedIn) => {
+const useGetUserFromAsync = () => {
 
-//     const [userData, setUserData] = useState(null)
+    const [customerData, setCustomerData] = useState(null)
 
-//     useEffect(() => {
+    useEffect(() => {
 
-//         AsyncStorage.getItem(USER_KEY).then(res => {
-//             setUserData(res ? JSON.parse(res) : null)
-//             console.log("USER IN ASYN--->", userData, res)
-//         }).catch(e => {
-//             console.log('Error getting user from storage:', error);
-//             setUserData(null);
-//         })
+        AsyncStorage.getItem(CUSTOMER_KEY).then(res => {
+            setCustomerData(res ? JSON.parse(res) : null)
+            console.log("USER IN ASYN--->", customerData, res)
+        }).catch(e => {
+            console.log('Error getting user from storage:', error);
+            setCustomerData(null);
+        })
         
-//     }, [isLoggedIn])
+    }, [])
 
-//     return { userData }
+    return { customerData }
 
-// }
+}
 
-// export default useGetUserFromAsync;
+export default useGetUserFromAsync;

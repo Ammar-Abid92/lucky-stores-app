@@ -3,7 +3,7 @@ import firebase from 'firebase/app';
 import { database } from '../config/firebase';
 
 
-const useGetCollectionDataById = (collectionName, foreignKey, id) => {
+const useGetCollectionDataByQuery = (collectionName, foreignKey, id) => {
 
   const [data, setData] = useState([])
   const [error, setError] = useState('')
@@ -42,4 +42,4 @@ const useGetCollectionDataById = (collectionName, foreignKey, id) => {
 
 }
 
-export default useGetCollectionDataById;
+export default useGetCollectionDataByQuery;
